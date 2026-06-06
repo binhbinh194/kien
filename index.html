@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chúc Mừng Sinh Nhật Công Chúa Của Anh! 💕</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Inter:wght@300;400;600;800&family=Outfit:wght@400;600;800&family=Playfair+Display:ital,wght@0,600;0,800;1,400&display=swap"
+        rel="stylesheet">
+
+    <!-- Meta Description for SEO -->
+    <meta name="description"
+        content="Món quà sinh nhật 3D đầy bất ngờ, lãng mạn và ngọt ngào dành riêng cho công chúa nhỏ. Hãy khám phá ngay nhé!">
+
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- CSS Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Canvas for global ambient stars/hearts background -->
+    <canvas id="ambient-canvas"></canvas>
+
+    <!-- Background Music -->
+    <audio id="bg-music" loop>
+        <source src="assets/birthday_music.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Floating Audio Control -->
+    <div id="audio-control" class="hidden">
+        <div class="disc-wrapper">
+            <img src="assets/cake.png" alt="Music Disc" class="music-disc">
+            <div class="music-note-icon"><i class="fas fa-music"></i></div>
+        </div>
+        <span class="music-tooltip">Click để Tắt/Bật Nhạc</span>
+    </div>
+
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="active-screen">
+        <div class="loading-content">
+            <div class="heart-loading-wrapper">
+                <svg class="heart-svg" viewBox="0 0 32 29.6">
+                    <path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2
+                    c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z" />
+                </svg>
+                <div class="heart-glow"></div>
+            </div>
+            <h2>Đang chuẩn bị điều bất ngờ...</h2>
+            <div class="progress-bar-container">
+                <div id="loading-progress" class="progress-bar"></div>
+            </div>
+            <p id="loading-text">0%</p>
+        </div>
+    </div>
+
+    <!-- Love Progress Header (Appears after unlock) -->
+    <header id="love-header" class="hidden">
+        <div class="header-logo">
+            <span class="logo-heart"><i class="fas fa-heart"></i></span>
+            <span class="logo-text">My Princess</span>
+        </div>
+        <div class="progress-steps">
+            <div class="step active" data-step="1">
+                <span class="step-num"><i class="fas fa-gift"></i></span>
+                <span class="step-label">Mở Hộp</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step" data-step="2">
+                <span class="step-num"><i class="fas fa-images"></i></span>
+                <span class="step-label">Kỷ Niệm</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step" data-step="3">
+                <span class="step-num"><i class="fas fa-envelope-open-text"></i></span>
+                <span class="step-label">Thư Tình</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step" data-step="4">
+                <span class="step-num"><i class="fas fa-wand-magic-sparkles"></i></span>
+                <span class="step-label">Điều Ước</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step" data-step="5">
+                <span class="step-num"><i class="fas fa-fire"></i></span>
+                <span class="step-label">Kết Lễ</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- SECTION 1: UNLOCK SCREEN -->
+    <section id="sec-unlock" class="screen-section active-section">
+        <div class="unlock-container">
+            <h1 class="glow-text title-cursive">Hộp Quà Bí Ẩn Dành Riêng Cho Em</h1>
+            <p class="subtitle">Hãy chạm vào hộp quà để bắt đầu khám phá thế giới lãng mạn này...</p>
+
+            <!-- CSS 3D Gift Box -->
+            <div class="gift-box-scene">
+                <div class="gift-box-wrapper" id="interactive-gift-box">
+                    <div class="gift-box">
+                        <!-- Box Sides -->
+                        <div class="box-face box-front"></div>
+                        <div class="box-face box-back"></div>
+                        <div class="box-face box-left"></div>
+                        <div class="box-face box-right"></div>
+                        <div class="box-face box-top">
+                            <div class="ribbon-cross-y"></div>
+                            <div class="ribbon-cross-x"></div>
+                            <div class="box-ribbon-bow"></div>
+                        </div>
+                        <div class="box-face box-bottom"></div>
+
+                        <!-- Ribbon strips on sides -->
+                        <div class="ribbon-strip ribbon-strip-1"></div>
+                        <div class="ribbon-strip ribbon-strip-2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Love Quiz Container -->
+            <div class="passcode-container">
+                <p class="quiz-question">💕 Câu hỏi xác thực tình yêu 💕</p>
+                <h3 class="quiz-title font-cursive">Ai là công chúa đáng yêu và xinh đẹp nhất vũ trụ của kiên?</h3>
+                <div class="quiz-options">
+                    <button class="btn btn-secondary quiz-opt" data-correct="false">Một cô bé hàng xóm</button>
+                    <button class="btn btn-secondary quiz-opt" data-correct="true">Chính là Em - Công chúa duy nhất của
+                        anh! 👑</button>
+                    <button class="btn btn-secondary quiz-opt" data-correct="false">Một nhân vật trong phim</button>
+                </div>
+
+                <!-- Backdoor for manual passcode -->
+                <div class="passcode-backdoor">
+                    <span id="toggle-passcode-input">Hoặc nhập mật mã bí mật <i class="fas fa-chevron-down"></i></span>
+                    <div class="input-group hidden-input" id="manual-passcode-group">
+                        <input type="password" id="passcode-input" placeholder="Mật mã tình yêu..." maxlength="10">
+                        <button id="btn-unlock" class="btn btn-glow">Mở Khóa <i class="fas fa-key"></i></button>
+                    </div>
+                </div>
+                <p id="error-message" class="error-text"></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: MEMORY CAROUSEL -->
+    <section id="sec-carousel" class="screen-section hidden-section">
+        <div class="section-title-wrapper">
+            <h2 class="section-title font-cursive">Dòng Thời Gian Kỷ Niệm</h2>
+            <p class="section-subtitle">Kéo hoặc vuốt màn hình để xoay vòng xoay 3D chứa những khoảnh khắc tuyệt vời
+                nhất của chúng ta.</p>
+        </div>
+
+        <div class="carousel-3d-container">
+            <div class="carousel-3d" id="memory-carousel">
+                <!-- Slide 1 -->
+                <div class="carousel-card" style="--index: 0;"
+                    data-desc="Nơi tình yêu bắt đầu - Đêm trời sao rực rỡ, hai trái tim hòa chung một nhịp đập.">
+                    <div class="card-inner">
+                        <img src="anhnew/demding%20menh.jpg" alt="Starry Night Couple">
+                        <div class="card-caption">Đêm Định Mệnh</div>
+                    </div>
+                </div>
+                <!-- Slide 2 -->
+                <div class="carousel-card" style="--index: 1;"
+                    data-desc="Mừng em tuổi mới! Chúc công chúa nhỏ luôn rạng rỡ, ngọt ngào và hạnh phúc bên anh.">
+                    <div class="card-inner">
+                        <img src="anhnew/sinhnhatngotngao.jpg" alt="Birthday Cake">
+                        <div class="card-caption">Sinh Nhật Ngọt Ngào</div>
+                    </div>
+                </div>
+                <!-- Slide 3 -->
+                <div class="carousel-card" style="--index: 2;"
+                    data-desc="Từng nét bút gửi gắm yêu thương, mong rằng tình cảm chúng ta luôn bền chặt và bền lâu.">
+                    <div class="card-inner">
+                        <img src="anhnew/thu%20tinh%20gui%20em.jpg" alt="Love Letter">
+                        <div class="card-caption">Thư Tình Gửi Em</div>
+                    </div>
+                </div>
+                <!-- Slide 4 -->
+                <div class="carousel-card" style="--index: 3;"
+                    data-desc="Cùng đi qua những năm tháng thanh xuân đầy nắng, cùng nắm tay đi đến cuối con đường.">
+                    <div class="card-inner">
+                        <img src="anhnew/chodemuochen.jpg" alt="Flower Field Walk">
+                        <div class="card-caption">Chợ Đêm Ước Hẹn</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Description Box for Current Photo -->
+        <div class="photo-description-box" id="carousel-desc-box">
+            Click vào ảnh để xem thông điệp ngọt ngào phía sau!
+        </div>
+
+        <div class="navigation-controls">
+            <button id="btn-to-envelope" class="btn btn-primary btn-glow hidden">
+                Tiến Tới Thư Tình <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </section>
+
+    <!-- SECTION 3: LOVE LETTER -->
+    <section id="sec-letter" class="screen-section hidden-section">
+        <div class="section-title-wrapper">
+            <h2 class="section-title font-cursive">Lời Thì Thầm Của Trái Tim</h2>
+            <p class="section-subtitle">Nhấp vào phong thư để mở ra bức thư tình bí mật anh viết cho riêng em.</p>
+        </div>
+
+        <div class="letter-scene">
+            <!-- 3D Folding Envelope -->
+            <div class="envelope-wrapper" id="interactive-envelope">
+                <div class="envelope">
+                    <div class="envelope-front"></div>
+                    <div class="envelope-back"></div>
+                    <div class="envelope-flap" id="envelope-flap"></div>
+                    <div class="heart-seal" id="heart-seal"><i class="fas fa-heart"></i></div>
+
+                    <!-- Paper letter sliding out -->
+                    <div class="letter-paper" id="letter-paper">
+                        <div class="paper-content">
+                            <h3 class="paper-title font-cursive">Gửi Bé Yêu Của Anh,</h3>
+                            <div class="paper-text" id="typewriter-text">
+                                <!-- Will be typed by JS -->
+                            </div>
+                            <p class="paper-signature font-cursive">Yêu em mãi mãi,<br>Anh của em ❤️</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="navigation-controls">
+            <button id="btn-to-wishes" class="btn btn-primary btn-glow hidden">
+                Nhận Đặc Quyền Tình Yêu <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </section>
+
+    <!-- SECTION 4: WISHING WELL (MAGIC CARDS) -->
+    <section id="sec-wishes" class="screen-section hidden-section">
+        <div class="section-title-wrapper">
+            <h2 class="section-title font-cursive">Thẻ Bài Đặc Quyền Tình Yêu</h2>
+            <p class="section-subtitle">Hãy chọn 3 tấm thẻ bất kì để nhận "đặc quyền ngọt ngào" từ anh. Anh hứa sẽ thực
+                hiện vô điều kiện!</p>
+        </div>
+
+        <div class="cards-grid-container">
+            <div class="cards-grid">
+                <!-- Card 1 -->
+                <div class="magic-card" data-title="Massage Toàn Thân"
+                    data-detail="Em sẽ được nhận 1 tiếng massage vai, cổ, gáy siêu thoải mái bất cứ khi nào em mệt mỏi.">
+                    <div class="card-face card-front-face">
+                        <div class="card-sparkle"></div>
+                        <div class="card-card-logo"><i class="fas fa-crown"></i></div>
+                        <span>Chạm để lật</span>
+                    </div>
+                    <div class="card-face card-back-face">
+                        <h4>Món Quà Thứ 1</h4>
+                        <p class="card-gift-name">Massage Trị Liệu</p>
+                        <p class="card-gift-desc">1 tiếng massage vai, cổ, gáy mệt mỏi từ anh.</p>
+                    </div>
+                </div>
+                <!-- Card 2 -->
+                <div class="magic-card" data-title="Bữa Tối Lãng Mạn"
+                    data-detail="Một buổi tối hẹn hò tại bất kỳ nhà hàng nào em thích, do anh chuẩn bị tất tần tật từ A-Z.">
+                    <div class="card-face card-front-face">
+                        <div class="card-sparkle"></div>
+                        <div class="card-card-logo"><i class="fas fa-utensils"></i></div>
+                        <span>Chạm để lật</span>
+                    </div>
+                    <div class="card-face card-back-face">
+                        <h4>Món Quà Thứ 2</h4>
+                        <p class="card-gift-name">Bữa Tối Lãng Mạn</p>
+                        <p class="card-gift-desc">Hẹn hò sang chảnh A-Z tại nhà hàng em thích.</p>
+                    </div>
+                </div>
+                <!-- Card 3 -->
+                <div class="magic-card" data-title="Vé Miễn Tội"
+                    data-detail="Tấm vé thần kỳ giúp em xóa bỏ mọi giận dỗi của anh ngay lập tức. Có hiệu lực mãi mãi!">
+                    <div class="card-face card-front-face">
+                        <div class="card-sparkle"></div>
+                        <div class="card-card-logo"><i class="fas fa-ticket-alt"></i></div>
+                        <span>Chạm để lật</span>
+                    </div>
+                    <div class="card-face card-back-face">
+                        <h4>Món Quà Thứ 3</h4>
+                        <p class="card-gift-name">Vé Miễn Tội Thần Kỳ</p>
+                        <p class="card-gift-desc">Bỏ qua mọi giận dỗi của anh lập tức (Mãi mãi).</p>
+                    </div>
+                </div>
+                <!-- Card 4 -->
+                <div class="magic-card" data-title="1 Ngày Làm Vua"
+                    data-detail="Em sẽ có toàn quyền sai bảo anh làm bất cứ thứ gì trong vòng 24 giờ. Anh hoàn toàn phục tùng!">
+                    <div class="card-face card-front-face">
+                        <div class="card-sparkle"></div>
+                        <div class="card-card-logo"><i class="fas fa-wand-magic"></i></div>
+                        <span>Chạm để lật</span>
+                    </div>
+                    <div class="card-face card-back-face">
+                        <h4>Món Quà Thứ 4</h4>
+                        <p class="card-gift-name">24H Làm Vua</p>
+                        <p class="card-gift-desc">Toàn quyền sai bảo anh làm mọi thứ trong 1 ngày.</p>
+                    </div>
+                </div>
+                <!-- Card 5 -->
+                <div class="magic-card" data-title="Món Quà Bất Ngờ"
+                    data-detail="Một món quà bí mật nằm trong giỏ hàng shopee của em sẽ được anh thanh toán ngay lập tức!">
+                    <div class="card-face card-front-face">
+                        <div class="card-sparkle"></div>
+                        <div class="card-card-logo"><i class="fas fa-shopping-bag"></i></div>
+                        <span>Chạm để lật</span>
+                    </div>
+                    <div class="card-face card-back-face">
+                        <h4>Món Quà Thứ 5</h4>
+                        <p class="card-gift-name">Thanh Toán Shopee</p>
+                        <p class="card-gift-desc">Thanh toán 1 món đồ em cực thích trong giỏ hàng.</p>
+                    </div>
+                </div>
+                <!-- Card 6 -->
+                <div class="magic-card" data-title="Ôm 100 Cái"
+                    data-detail="Liệu trình nạp năng lượng bằng 100 chiếc ôm ấm áp, kèm những nụ hôn ngọt ngào mỗi ngày.">
+                    <div class="card-face card-front-face">
+                        <div class="card-sparkle"></div>
+                        <div class="card-card-logo"><i class="fas fa-heartbeat"></i></div>
+                        <span>Chạm để lật</span>
+                    </div>
+                    <div class="card-face card-back-face">
+                        <h4>Món Quà Thứ 6</h4>
+                        <p class="card-gift-name">Nạp Năng Lượng Ôm</p>
+                        <p class="card-gift-desc">100 cái ôm ấm áp và nụ hôn mỗi ngày.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="selection-status" id="cards-status">
+            Đã lật: <span id="flip-count">0</span> / 3 thẻ. Hãy lật đủ 3 thẻ nhé!
+        </div>
+
+        <div class="navigation-controls">
+            <button id="btn-to-finale" class="btn btn-primary btn-glow hidden">
+                Tiến Tới Phần Cuối Cùng <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </section>
+
+    <!-- SECTION 5: GRAND FINALE -->
+    <section id="sec-finale" class="screen-section hidden-section">
+        <!-- Fireworks full-screen overlay for this section -->
+        <canvas id="fireworks-canvas"></canvas>
+
+        <div class="finale-content">
+            <h2 class="glow-text font-cursive main-birthday-title animate-bounce">
+                Chúc Mừng Sinh Nhật Bé Yêu!
+            </h2>
+            <p class="finale-subtext">Cảm ơn em đã xuất hiện và làm thế giới của anh ngập tràn sắc màu hạnh phúc.</p>
+
+            <!-- Three.js Container for the 3D glowing particle heart -->
+            <div id="threejs-container"></div>
+
+            <!-- Anniversary Love Counter -->
+            <div class="love-counter-wrapper">
+                <p class="counter-label"><i class="fas fa-heart animate-pulse-fast"></i> Chúng Ta Đã Bên Nhau <i
+                        class="fas fa-heart animate-pulse-fast"></i></p>
+                <div id="love-counter">
+                    <div class="counter-item"><span id="count-days">000</span><label>Ngày</label></div>
+                    <div class="counter-item"><span id="count-hours">00</span><label>Giờ</label></div>
+                    <div class="counter-item"><span id="count-minutes">00</span><label>Phút</label></div>
+                    <div class="counter-item"><span id="count-seconds">00</span><label>Giây</label></div>
+                </div>
+            </div>
+
+            <div class="finale-buttons-wrapper">
+                <button id="btn-love" class="btn btn-love btn-glow-pink">
+                    Em Yêu Anh ❤️ (Bấm để bắn pháo hoa)
+                </button>
+                <button id="btn-replay" class="btn btn-secondary">
+                    <i class="fas fa-redo"></i> Xem Lại Điều Bất Ngờ
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Detailed Modal View for Memory/Card items -->
+    <div id="custom-modal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="modal-close" id="modal-close-btn">&times;</div>
+            <div class="modal-body">
+                <h3 id="modal-title" class="font-cursive">Tiêu đề</h3>
+                <div id="modal-image-container">
+                    <img id="modal-img" src="" alt="Modal Image">
+                </div>
+                <p id="modal-text">Nội dung chi tiết...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Background Confetti Container -->
+    <div id="confetti-container"></div>
+
+    <!-- Watermark -->
+    <div class="watermark">bình đã ở đây</div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- GSAP for smooth animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="three-scene.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
